@@ -1,0 +1,27 @@
+{
+  "id": "/",
+  "name": "The Gladius 26 Attendance",
+  "short_name": "Gladius 26",
+  "description": "Presensi rapat mingguan Fakultas Teknik Angkatan 2026.",
+  "lang": "id-ID",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#f6f8fc",
+  "theme_color": "#2563eb",
+  "icons": [
+    {
+      "src": "assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

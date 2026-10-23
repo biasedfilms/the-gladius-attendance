@@ -1,0 +1,4 @@
+[functions.check-in]
+# Public, unauthenticated student check-in. The function itself validates all input,
+# restricts the allowed website origin, rate-limits requests, and invokes a service-role-only SQL function.
+verify_jwt = false
