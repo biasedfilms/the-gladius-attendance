@@ -9,12 +9,36 @@ const corsHeaders = (origin: string) => ({
 const jsonResponse = (payload: Record<string, unknown>, status: number, origin: string) => new Response(JSON.stringify(payload), { status, headers: { ...corsHeaders(origin), "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" } });
 
 Deno.serve(async (request) => {
-  const allowedOrigin = Deno.env.get("ALLOWED_ORIGIN") || "";
-  const requestOrigin = request.headers.get("origin") || "";
-  // Configure ALLOWED_ORIGIN to the exact deployed website origin. No wildcard CORS in production.
-  if (!allowedOrigin || (requestOrigin && requestOrigin !== allowedOrigin)) return jsonResponse({ ok: false, code: "origin_not_allowed" }, 403, allowedOrigin || "null");
-  if (request.method === "OPTIONS") return new Response("ok", { headers: corsHeaders(allowedOrigin) });
-  if (request.method !== "POST") return jsonResponse({ ok: false, code: "method_not_allowed" }, 405, allowedOrigin);
+  // Allow one or more exact website origins, separated by commas. Strip a trailing
+  // slash so a common dashboard configuration mistake does not break CORS.
+  const allowedOrigins = (Deno.env.get("ALLOWED_ORIGIN") || "")
+    .split(",")
+    .map((origin) => origin.trim().replace(/\/+$/, ""))
+    .filter(Boolean);
+  const requestOrigin = (request.headers.get("origin") || "").replace(/\/+$/, "");
+  const originAllowed = Boolean(requestOrigin && allowedOrigins.includes(requestOrigin));
+  const responseOrigin = originAllowed
+    ? requestOrigin
+    : allowedOrigins[0] || requestOrigin || "null";
+
+  // When not configured, echo only the requesting origin on a configuration-error
+  // response. This allows the frontend to show a useful message; no data is read or
+  // written before this check. In normal operation, origins remain explicitly allow-listed.
+  if (!allowedOrigins.length) {
+    console.error("[check-in] ALLOWED_ORIGIN is not configured");
+    // Let preflight complete so the actual POST can report the configuration error.
+    // This does not enable check-ins: POST still returns 503 without configuration.
+    if (request.method === "OPTIONS") {
+      return new Response("ok", { headers: corsHeaders(responseOrigin) });
+    }
+    return jsonResponse({ ok: false, code: "server_not_configured" }, 503, responseOrigin);
+  }
+  if (requestOrigin && !originAllowed) {
+    console.warn("[check-in] Rejected origin", { origin: requestOrigin });
+    return jsonResponse({ ok: false, code: "origin_not_allowed" }, 403, responseOrigin);
+  }
+  if (request.method === "OPTIONS") return new Response("ok", { headers: corsHeaders(responseOrigin) });
+  if (request.method !== "POST") return jsonResponse({ ok: false, code: "method_not_allowed" }, 405, responseOrigin);
   const supabaseUrl = Deno.env.get("SUPABASE_URL");
   let serviceRoleKey = Deno.env.get("SUPABASE_SECRET_KEY") || Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
   // Current Supabase runtimes provide a JSON map of named secret keys. The default
@@ -26,17 +50,24 @@ Deno.serve(async (request) => {
     } catch { serviceRoleKey = ""; }
   }
   const rateLimitSecret = Deno.env.get("RATE_LIMIT_SECRET");
-  if (!supabaseUrl || !serviceRoleKey || !rateLimitSecret) return jsonResponse({ ok: false, code: "server_not_configured" }, 503, allowedOrigin);
+  if (!supabaseUrl || !serviceRoleKey || !rateLimitSecret) {
+    console.error("[check-in] Server secrets are incomplete", {
+      hasSupabaseUrl: Boolean(supabaseUrl),
+      hasServiceRoleKey: Boolean(serviceRoleKey),
+      hasRateLimitSecret: Boolean(rateLimitSecret),
+    });
+    return jsonResponse({ ok: false, code: "server_not_configured" }, 503, responseOrigin);
+  }
 
   let parsedBody: unknown;
-  try { parsedBody = await request.json(); } catch { return jsonResponse({ ok: false, code: "invalid_request" }, 400, allowedOrigin); }
-  if (!parsedBody || typeof parsedBody !== "object" || Array.isArray(parsedBody)) return jsonResponse({ ok: false, code: "invalid_request" }, 400, allowedOrigin);
+  try { parsedBody = await request.json(); } catch { return jsonResponse({ ok: false, code: "invalid_request" }, 400, responseOrigin); }
+  if (!parsedBody || typeof parsedBody !== "object" || Array.isArray(parsedBody)) return jsonResponse({ ok: false, code: "invalid_request" }, 400, responseOrigin);
   const body = parsedBody as Record<string, unknown>;
   const token = typeof body.token === "string" ? body.token.trim() : "";
   const fullName = typeof body.full_name === "string" ? body.full_name.trim().replace(/\s+/g, " ") : "";
   const programId = typeof body.study_program_id === "string" ? body.study_program_id : "";
   if (token.length < 32 || token.length > 160 || fullName.length < 2 || fullName.length > 100 || !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(programId)) {
-    return jsonResponse({ ok: false, code: "invalid_request" }, 400, allowedOrigin);
+    return jsonResponse({ ok: false, code: "invalid_request" }, 400, responseOrigin);
   }
 
   const forwarded = request.headers.get("x-forwarded-for")?.split(",").at(-1)?.trim();
@@ -50,10 +81,10 @@ Deno.serve(async (request) => {
   if (error) {
     // Avoid returning database details to an unauthenticated caller.
     console.error("check_in_secure failed", error.message);
-    return jsonResponse({ ok: false, code: "server_error" }, 500, allowedOrigin);
+    return jsonResponse({ ok: false, code: "server_error" }, 500, responseOrigin);
   }
   const result = data && typeof data === "object" ? data as Record<string, unknown> : { ok: false, code: "server_error" };
   // Business outcomes are returned as JSON with HTTP 200 so the browser can show
   // the specific validation message; transport/configuration failures still use 4xx/5xx.
-  return jsonResponse(result, 200, allowedOrigin);
+  return jsonResponse(result, 200, responseOrigin);
 });

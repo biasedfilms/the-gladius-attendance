@@ -1,4 +1,4 @@
-const CACHE_NAME = "gladius-static-v3-blue-qr-fix";
+const CACHE_NAME = "gladius-static-v4-checkin-debug";
 const STATIC_ASSETS = [
   "./", "./index.html", "./login.html", "./admin.html", "./check-in.html", "./offline.html",
   "./manifest.json", "./css/styles.css", "./assets/favicon.svg", "./assets/icon-192.png", "./assets/icon-512.png"
@@ -21,7 +21,23 @@ self.addEventListener("fetch", (event) => {
     event.respondWith(fetch(request).catch(async () => (await caches.match("./offline.html"))));
     return;
   }
-  if (/\.(css|js|svg|png|woff2?)$/.test(url.pathname) || url.pathname.endsWith("manifest.json")) {
+  if (/\.(css|js)$/.test(url.pathname)) {
+    // Network-first for executable/style assets: deploys must not leave students
+    // running stale check-in code. Use the last cached copy when offline only.
+    event.respondWith(fetch(request).then((response) => {
+      if (response.ok) {
+        const copy = response.clone();
+        caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+      }
+      return response;
+    }).catch(async () => {
+      const cached = await caches.match(request);
+      if (cached) return cached;
+      throw new Error("Asset unavailable while offline");
+    }));
+    return;
+  }
+  if (/\.(svg|png|woff2?)$/.test(url.pathname) || url.pathname.endsWith("manifest.json")) {
     event.respondWith(caches.match(request).then((cached) => cached || fetch(request).then((response) => {
       if (response.ok) { const copy = response.clone(); caches.open(CACHE_NAME).then((cache) => cache.put(request, copy)); }
       return response;
