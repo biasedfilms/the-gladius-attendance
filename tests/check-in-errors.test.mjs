@@ -26,6 +26,8 @@ test('explains likely CORS/origin issue for a fetch failure without leaking stud
   const result = await checkInFailureMessage(error);
   assert.match(result, /CORS/);
   assert.match(result, /https:\/\/the-gladius-attendance\.vercel\.app/);
+  assert.match(result, /belum dapat dipastikan/);
+  assert.match(result, /dashboard terlebih dahulu/);
   assert.doesNotMatch(result, /Mikael|token/i);
 });
 

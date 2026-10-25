@@ -1,4 +1,5 @@
 import { supabase, displayDate, displayTime, displayDateTime, escapeHtml, setFeedback, safeError } from "./supabase.js";
+import { fetchAllRows } from "./paginated-query.js";
 
 const $ = (selector) => document.querySelector(selector);
 const state = { user: null, meetings: [], programs: [], attendance: [], selectedView: "overview", editingMeetingId: null, confirmHandler: null, channel: null };
@@ -44,14 +45,12 @@ async function verifyAdmin() {
   return true;
 }
 async function loadData() {
-  const [meetingResult, programResult, attendanceResult] = await Promise.all([
-    supabase.from("meetings").select("id,title,meeting_date,start_time,notes,status,attendance_token,attendance_opened_at,attendance_expires_at,attendance_closed_at,created_at").order("meeting_date", { ascending: false }).order("created_at", { ascending: false }),
-    supabase.from("study_programs").select("id,name,is_active,created_at").order("name"),
-    supabase.from("attendance").select("id,meeting_id,full_name,normalized_name,study_program_id,study_program_name,checked_in_at").order("checked_in_at", { ascending: false })
+  const [meetings, programs, attendance] = await Promise.all([
+    fetchAllRows(() => supabase.from("meetings").select("id,title,meeting_date,start_time,notes,status,attendance_token,attendance_opened_at,attendance_expires_at,attendance_closed_at,created_at").order("meeting_date", { ascending: false }).order("created_at", { ascending: false }).order("id", { ascending: false })),
+    fetchAllRows(() => supabase.from("study_programs").select("id,name,is_active,created_at").order("name")),
+    fetchAllRows(() => supabase.from("attendance").select("id,meeting_id,full_name,normalized_name,study_program_id,study_program_name,checked_in_at").order("checked_in_at", { ascending: false }).order("id", { ascending: false }))
   ]);
-  const error = meetingResult.error || programResult.error || attendanceResult.error;
-  if (error) throw error;
-  state.meetings = meetingResult.data || []; state.programs = programResult.data || []; state.attendance = attendanceResult.data || [];
+  state.meetings = meetings; state.programs = programs; state.attendance = attendance;
   renderAll();
 }
 function renderAll() { renderOverview(); renderMeetings(); renderProgramList(); populateFilters(); renderAttendance(); }

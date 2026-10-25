@@ -202,7 +202,7 @@ async function submitAttendance(event) {
     const message = await checkInFailureMessage(error);
     setFeedback(
       $("#checkin-feedback"),
-      `${message} Presensi belum dianggap tercatat.`,
+      message,
       "error",
     );
     button.disabled = false;

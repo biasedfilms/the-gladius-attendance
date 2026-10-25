@@ -3,9 +3,9 @@ const originNow = () => globalThis.location?.origin || "domain ini";
 export function functionCodeMessage(code) {
   const messages = {
     origin_not_allowed: `Domain presensi belum diizinkan oleh server. Admin perlu menambahkan origin ${originNow()} ke ALLOWED_ORIGIN di Supabase (tanpa path).`,
-    server_not_configured: "Layanan presensi belum dikonfigurasi di Supabase. Admin perlu memeriksa secret Edge Function, terutama ALLOWED_ORIGIN dan RATE_LIMIT_SECRET.",
+    server_not_configured: "Layanan presensi belum dikonfigurasi di Supabase. Admin perlu memeriksa ALLOWED_ORIGIN, SUPABASE_URL, key server (secret/service-role), dan RATE_LIMIT_SECRET di Edge Function Secrets.",
     invalid_request: "Server menolak format permintaan. Muat ulang halaman dan coba kembali; jika tetap gagal, hubungi administrator.",
-    server_error: "Server gagal menyimpan presensi. Administrator perlu memeriksa log Edge Function check-in dan fungsi SQL check_in_secure di Supabase.",
+    server_error: "Server gagal memproses presensi. Administrator perlu memeriksa log Edge Function check-in, akses RPC, serta fungsi SQL check_in_secure di Supabase.",
   };
   return messages[code] || null;
 }
@@ -55,7 +55,7 @@ export async function checkInFailureMessage(error) {
 
   const failureSignature = `${error?.name || ""} ${error?.message || ""}`;
   if (/FunctionsFetchError|Failed to send a request|Failed to fetch|NetworkError|Load failed/i.test(failureSignature)) {
-    return `Browser tidak menerima respons dari layanan presensi. Periksa koneksi internet; jika internet normal, administrator perlu memeriksa CORS dan memastikan ALLOWED_ORIGIN memuat ${originNow()} persis.`;
+    return `Browser tidak menerima respons dari layanan presensi. Status pengiriman belum dapat dipastikan—server mungkin sudah menyimpan data sebelum koneksi terputus. Jangan langsung mengirim ulang; minta admin memeriksa dashboard terlebih dahulu. Jika data belum tercatat, periksa koneksi/CORS dan pastikan ALLOWED_ORIGIN memuat ${originNow()} persis.`;
   }
-  return "Permintaan belum berhasil. Periksa koneksi dan konfigurasi, lalu coba lagi.";
+  return "Permintaan belum berhasil. Periksa koneksi dan konfigurasi; jika respons terputus setelah tombol dikirim, minta admin memeriksa dashboard sebelum mencoba lagi.";
 }

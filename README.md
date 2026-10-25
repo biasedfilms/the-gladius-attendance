@@ -1,4 +1,4 @@
-\# The Gladius 26 Attendance
+# The Gladius 26 Attendance
 
 **Presensi rapat Fakultas Teknik Angkatan 2026, lebih praktis dengan QR code.**
 

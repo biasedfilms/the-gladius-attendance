@@ -77,21 +77,16 @@ File `tests/check-in-errors.test.mjs` menambahkan tes untuk respons konfigurasi 
 | HTTP 500 / `server_error` | RPC `check_in_secure` atau akses database gagal | Baca log Edge Function dan periksa migrasi/grant pada database |
 | `FunctionsFetchError` tanpa status | Browser tidak mendapat respons yang bisa dibaca | Periksa internet, preflight/CORS, `ALLOWED_ORIGIN`, serta log fungsi |
 
-## 6. Hasil tes lokal
-
-Perintah yang dijalankan pada source hasil perbaikan:
+## 6. Hasil verifikasi lokal terkini
 
 ```text
-node --check js/check-in.js                  PASS
-node --check js/check-in-errors.js            PASS
-node --check js/supabase.js                   PASS
-node --check service-worker.js                PASS
-node --test tests/check-in-errors.test.mjs    PASS — 5 tests, 0 failures
-git diff --check                             PASS
-TypeScript static check for Edge Function     PASS
+node --check js/*.js dan service-worker.js   PASS
+node --test tests/*.test.mjs                  PASS — 8 tests, 0 failures
+Asset HTML/manifest/Service Worker             PASS — seluruh referensi lokal ditemukan
+git diff --check                              PASS
 ```
 
-Tes ini memverifikasi sintaks dan pemetaan error di sisi frontend serta pemeriksaan statis Edge Function. Tes ini **tidak** membuktikan bahwa secret produksi benar, function produksi sudah ter-deploy, atau koneksi database produksi berjalan; hal-hal tersebut harus dikonfirmasi di Supabase Dashboard.
+Tes mencakup pemetaan error check-in dan pagination hasil Supabase, termasuk simulasi pengambilan 1.203 baris dalam beberapa halaman. Tes lokal tidak membuktikan secret produksi benar, Edge Function sudah ter-deploy, autentikasi admin berjalan pada project live, atau database produksi menerima check-in. Runtime Edge Function belum diuji ulang dari lingkungan ini; verifikasi produksi harus dilakukan melalui Supabase Dashboard dan satu check-in terkendali.
 
 ## 7. Pencegahan agar tidak terulang
 

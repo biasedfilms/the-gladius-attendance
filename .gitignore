@@ -6,3 +6,6 @@
 node_modules/
 dist/
 coverage/
+supabase/.temp/
+supabase/.branches/
+*.log
