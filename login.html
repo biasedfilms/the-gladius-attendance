@@ -1,27 +1,86 @@
 <!doctype html>
 <html lang="id">
-<head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#0b2344"><link rel="icon" href="assets/favicon-64.png" sizes="64x64" type="image/png"><link rel="apple-touch-icon" href="assets/icon-192.png"><meta name="apple-mobile-web-app-title" content="Gladius 26"><meta name="apple-mobile-web-app-capable" content="yes"><link rel="manifest" href="manifest.json"><link rel="stylesheet" href="css/styles.css">
-  <title>Masuk Admin · The Gladius 26 Attendance</title>
-</head>
-<body class="auth-page">
-  <main class="auth-shell">
-    <a class="brand" href="index.html"><img class="brand-mark" src="assets/the-gladius-logo.png" alt="" width="48" height="48" aria-hidden="true" decoding="async"><span class="brand-copy"><strong>The Gladius 26</strong><small>Attendance</small></span></a>
-    <section class="auth-panel" aria-labelledby="login-title">
-      <p class="eyebrow">RUANG ADMINISTRATOR</p><h1 id="login-title">Selamat datang.</h1><p class="muted">Masuk untuk mengelola rapat dan melihat presensi.</p>
-      <form id="login-form" class="form-stack">
-        <label for="email">Email administrator</label><input id="email" name="email" type="email" autocomplete="username" placeholder="admin@contoh.id" required>
-        <label for="password">Kata sandi</label><input id="password" name="password" type="password" autocomplete="current-password" placeholder="Masukkan kata sandi" required>
-        <button id="login-submit" class="button button-primary button-full" type="submit">Masuk ke dashboard</button>
-        <p id="login-feedback" class="feedback" role="status" aria-live="polite"></p>
-      </form>
-      <a class="back-link" href="index.html">← Kembali ke beranda</a>
-    </section>
-    <p class="auth-footnote">Akses hanya untuk akun yang telah diberi peran administrator.</p>
-  </main>
-  <script src="js/config.js"></script>
-  <script type="module" src="js/login.js"></script>
-  <script src="js/pwa.js" defer></script>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#0b2344" />
+    <link
+      rel="icon"
+      href="assets/favicon-64.png"
+      sizes="64x64"
+      type="image/png"
+    />
+    <link rel="apple-touch-icon" href="assets/icon-192.png" />
+    <meta name="apple-mobile-web-app-title" content="Gladius 26" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="stylesheet" href="css/styles.css" />
+    <title>Masuk Admin · The Gladius 26 Attendance</title>
+  </head>
+  <body class="auth-page">
+    <main class="auth-shell">
+      <a class="brand" href="index.html"
+        ><img
+          class="brand-mark"
+          src="assets/the-gladius-logo.png"
+          alt=""
+          width="48"
+          height="48"
+          aria-hidden="true"
+          decoding="async"
+        /><span class="brand-copy"
+          ><strong>The Gladius 26</strong><small>Attendance</small></span
+        ></a
+      >
+      <section class="auth-panel" aria-labelledby="login-title">
+        <p class="eyebrow">RUANG ADMINISTRATOR</p>
+        <h1 id="login-title">Selamat datang.</h1>
+        <p class="muted">Masuk untuk mengelola rapat dan melihat presensi.</p>
+        <form id="login-form" class="form-stack">
+          <label for="email">Email administrator</label
+          ><input
+            id="email"
+            name="email"
+            type="email"
+            autocomplete="username"
+            placeholder="admin@contoh.id"
+            required
+          />
+          <label for="password">Kata sandi</label
+          ><input
+            id="password"
+            name="password"
+            type="password"
+            autocomplete="current-password"
+            placeholder="Masukkan kata sandi"
+            required
+          />
+          <button
+            id="login-submit"
+            class="button button-primary button-full"
+            type="submit"
+          >
+            Masuk ke dashboard
+          </button>
+          <p
+            id="login-feedback"
+            class="feedback"
+            role="status"
+            aria-live="polite"
+          ></p>
+        </form>
+        <a class="back-link" href="index.html">← Kembali ke beranda</a>
+      </section>
+      <p class="auth-footnote">
+        Akses hanya untuk akun yang telah diberi peran administrator.
+      </p>
+    </main>
+    <script src="js/vendor/supabase-js-2.118.0.umd.js"></script>
+    <script src="js/config.js"></script>
+    <script type="module" src="js/login.js"></script>
+    <script src="js/pwa.js" defer></script>
+  </body>
 </html>

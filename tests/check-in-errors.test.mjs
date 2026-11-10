@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { checkInFailureMessage, functionCodeMessage } from '../js/check-in-errors.js';
+import { beginFailureMessage, checkInFailureMessage, functionCodeMessage } from '../js/check-in-errors.js';
 
 globalThis.location = { origin: 'https://the-gladius-attendance.vercel.app' };
 const originalConsoleError = console.error;
@@ -27,7 +27,9 @@ test('explains likely CORS/origin issue for a fetch failure without leaking stud
   assert.match(result, /CORS/);
   assert.match(result, /https:\/\/the-gladius-attendance\.vercel\.app/);
   assert.match(result, /belum dapat dipastikan/);
-  assert.match(result, /dashboard terlebih dahulu/);
+  // Retrying is safe: a record that was already saved comes back as "already recorded".
+  assert.match(result, /Coba kirim lagi/);
+  assert.match(result, /sudah tercatat/);
   assert.doesNotMatch(result, /Mikael|token/i);
 });
 
@@ -38,4 +40,18 @@ test('maps origin rejection to the current site origin', () => {
 test('preserves rate-limit guidance for HTTP 429', async () => {
   const error = { name: 'FunctionsHttpError', message: 'too many requests', context: new Response('{}', { status: 429 }) };
   assert.match(await checkInFailureMessage(error), /Terlalu banyak percobaan/);
+});
+
+test('explains ticket and rotating-QR outcomes with a rescan instruction', () => {
+  for (const code of ['ticket_expired', 'session_invalid', 'rate_limited']) {
+    assert.match(functionCodeMessage(code), /Scan ulang QR/, code);
+  }
+  assert.match(beginFailureMessage('code_expired')[1], /15 detik/);
+  assert.match(beginFailureMessage('rotating_required')[0], /tidak berlaku/);
+  assert.deepEqual(beginFailureMessage('something-new'), beginFailureMessage('invalid'));
+});
+
+test('reports a database that has not been migrated yet', async () => {
+  const error = { name: 'PostgrestError', code: 'PGRST202', message: 'Could not find the function public.begin_checkin' };
+  assert.match(await checkInFailureMessage(error), /sedang diperbarui/);
 });

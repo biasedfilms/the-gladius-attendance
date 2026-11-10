@@ -1,0 +1,12 @@
+# Only the static site is deployed. Database, function source, tests and tooling
+# are not served publicly.
+supabase/
+tests/
+docs/
+.github/
+package.json
+package-lock.json
+node_modules/
+*.md
+!js/vendor/LICENSES.md
+.env*

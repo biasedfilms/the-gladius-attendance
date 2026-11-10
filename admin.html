@@ -1,71 +1,557 @@
 <!doctype html>
 <html lang="id">
-<head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#0b2344"><link rel="icon" href="assets/favicon-64.png" sizes="64x64" type="image/png"><link rel="apple-touch-icon" href="assets/icon-192.png"><meta name="apple-mobile-web-app-title" content="Gladius 26"><meta name="apple-mobile-web-app-capable" content="yes"><link rel="manifest" href="manifest.json"><link rel="stylesheet" href="css/styles.css">
-  <title>Dashboard Admin · The Gladius 26 Attendance</title>
-</head>
-<body class="admin-page">
-  <div class="app-shell">
-    <header class="app-header">
-      <a class="brand" href="index.html"><img class="brand-mark" src="assets/the-gladius-logo.png" alt="" width="48" height="48" aria-hidden="true" decoding="async"><span class="brand-copy"><strong>The Gladius 26</strong><small>Attendance</small></span></a>
-      <div class="header-account"><span id="admin-email" class="account-email">Administrator</span><button id="logout-button" class="button button-quiet button-small" type="button">Keluar</button></div>
-    </header>
-    <main class="admin-main">
-      <div class="page-intro"><div><p class="eyebrow">PANEL PENGELOLAAN</p><h1>Ruang kendali.</h1><p class="muted">Kelola sesi rapat dan pantau kehadiran dalam satu tempat.</p></div><span id="today-label" class="date-chip"></span></div>
-      <nav class="tabs" aria-label="Navigasi dashboard">
-        <button type="button" class="tab is-active" data-view="overview" aria-current="page">Ringkasan</button>
-        <button type="button" class="tab" data-view="meetings">Rapat</button>
-        <button type="button" class="tab" data-view="attendance">Presensi</button>
-        <button type="button" class="tab" data-view="programs">Program studi</button>
-      </nav>
-      <p id="global-feedback" class="feedback global-feedback" role="status" aria-live="polite"></p>
-
-      <section id="view-overview" class="view-section is-active" aria-labelledby="overview-title">
-        <div class="section-heading"><div><h2 id="overview-title">Ringkasan</h2><p class="muted">Berdasarkan data rapat yang tersimpan.</p></div><button class="button button-primary" type="button" data-go-view="meetings">+ Buat rapat</button></div>
-        <div id="overview-stats" class="stats-grid"><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div>
-        <div class="content-grid">
-          <section class="panel"><div class="panel-heading"><div><h3>Sesi terbaru</h3><p class="muted">Status rapat terakhir.</p></div><button class="text-button" type="button" data-go-view="meetings">Lihat rapat →</button></div><div id="latest-meeting" class="empty-state compact"><span class="empty-mark">—</span><p>Memuat data rapat…</p></div></section>
-          <section class="panel"><div class="panel-heading"><div><h3>Presensi terbaru</h3><p class="muted">Check-in yang baru tercatat.</p></div><button class="text-button" type="button" data-go-view="attendance">Lihat semua →</button></div><div id="recent-attendance" class="empty-state compact"><span class="empty-mark">—</span><p>Memuat data presensi…</p></div></section>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#0b2344" />
+    <link
+      rel="icon"
+      href="assets/favicon-64.png"
+      sizes="64x64"
+      type="image/png"
+    />
+    <link rel="apple-touch-icon" href="assets/icon-192.png" />
+    <meta name="apple-mobile-web-app-title" content="Gladius 26" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="stylesheet" href="css/styles.css" />
+    <title>Dashboard Admin · The Gladius 26 Attendance</title>
+  </head>
+  <body class="admin-page">
+    <div class="app-shell">
+      <header class="app-header">
+        <a class="brand" href="index.html"
+          ><img
+            class="brand-mark"
+            src="assets/the-gladius-logo.png"
+            alt=""
+            width="48"
+            height="48"
+            aria-hidden="true"
+            decoding="async"
+          /><span class="brand-copy"
+            ><strong>The Gladius 26</strong><small>Attendance</small></span
+          ></a
+        >
+        <div class="header-account">
+          <span id="admin-email" class="account-email">Administrator</span
+          ><button
+            id="logout-button"
+            class="button button-quiet button-small"
+            type="button"
+          >
+            Keluar
+          </button>
         </div>
-        <section class="panel breakdown-panel"><div class="panel-heading"><div><h3>Distribusi program studi</h3><p id="breakdown-caption" class="muted">Untuk sesi terbaru.</p></div></div><div id="program-breakdown" class="empty-state compact"><p>Belum ada data.</p></div></section>
-      </section>
+      </header>
+      <main class="admin-main">
+        <div class="page-intro">
+          <div>
+            <p class="eyebrow">PANEL PENGELOLAAN</p>
+            <h1>Ruang kendali.</h1>
+            <p class="muted">
+              Kelola sesi rapat dan pantau kehadiran dalam satu tempat.
+            </p>
+          </div>
+          <span id="today-label" class="date-chip"></span>
+        </div>
+        <nav class="tabs" aria-label="Navigasi dashboard">
+          <button
+            type="button"
+            class="tab is-active"
+            data-view="overview"
+            aria-current="page"
+          >
+            Ringkasan
+          </button>
+          <button type="button" class="tab" data-view="meetings">Rapat</button>
+          <button type="button" class="tab" data-view="attendance">
+            Presensi
+          </button>
+          <button type="button" class="tab" data-view="programs">
+            Program studi
+          </button>
+        </nav>
+        <p
+          id="global-feedback"
+          class="feedback global-feedback"
+          role="status"
+          aria-live="polite"
+        ></p>
 
-      <section id="view-meetings" class="view-section" aria-labelledby="meetings-title" hidden>
-        <div class="section-heading"><div><h2 id="meetings-title">Kelola rapat</h2><p class="muted">Buat rapat, buka sesi presensi, lalu tampilkan QR untuk peserta.</p></div></div>
-        <section class="panel form-panel"><div class="panel-heading"><div><h3 id="meeting-form-title">Buat rapat baru</h3><p class="muted">Sesi tidak dibuat otomatis. Jadwal dapat diatur secara manual.</p></div></div>
-          <form id="meeting-form" class="meeting-form">
-            <div class="field field-wide"><label for="meeting-title">Nama rapat <span class="required">*</span></label><input id="meeting-title" name="title" maxlength="120" placeholder="Contoh: Rapat Mingguan Angkatan" required></div>
-            <div class="field"><label for="meeting-date">Tanggal <span class="required">*</span></label><input id="meeting-date" name="meeting_date" type="date" required></div>
-            <div class="field"><label for="meeting-time">Jam mulai (opsional)</label><input id="meeting-time" name="start_time" type="time"></div>
-            <div class="field field-wide"><label for="meeting-notes">Catatan (opsional)</label><textarea id="meeting-notes" name="notes" rows="2" maxlength="1000" placeholder="Agenda atau informasi tambahan"></textarea></div>
-            <div class="form-actions field-wide"><button id="meeting-save" class="button button-primary" type="submit">Simpan rapat</button><button id="meeting-cancel-edit" class="button button-secondary" type="button" hidden>Batal edit</button><span id="meeting-form-feedback" class="feedback" role="status"></span></div>
-          </form>
+        <section
+          id="view-overview"
+          class="view-section is-active"
+          aria-labelledby="overview-title"
+        >
+          <div class="section-heading">
+            <div>
+              <h2 id="overview-title">Ringkasan</h2>
+              <p class="muted">Berdasarkan data rapat yang tersimpan.</p>
+            </div>
+            <button
+              class="button button-primary"
+              type="button"
+              data-go-view="meetings"
+            >
+              + Buat rapat
+            </button>
+          </div>
+          <div id="overview-stats" class="stats-grid">
+            <div class="skeleton-line"></div>
+            <div class="skeleton-line"></div>
+            <div class="skeleton-line"></div>
+          </div>
+          <div class="content-grid">
+            <section class="panel">
+              <div class="panel-heading">
+                <div>
+                  <h3>Sesi terbaru</h3>
+                  <p class="muted">Status rapat terakhir.</p>
+                </div>
+                <button
+                  class="text-button"
+                  type="button"
+                  data-go-view="meetings"
+                >
+                  Lihat rapat →
+                </button>
+              </div>
+              <div id="latest-meeting" class="empty-state compact">
+                <span class="empty-mark">—</span>
+                <p>Memuat data rapat…</p>
+              </div>
+            </section>
+            <section class="panel">
+              <div class="panel-heading">
+                <div>
+                  <h3>Presensi terbaru</h3>
+                  <p class="muted">Check-in yang baru tercatat.</p>
+                </div>
+                <button
+                  class="text-button"
+                  type="button"
+                  data-go-view="attendance"
+                >
+                  Lihat semua →
+                </button>
+              </div>
+              <div id="recent-attendance" class="empty-state compact">
+                <span class="empty-mark">—</span>
+                <p>Memuat data presensi…</p>
+              </div>
+            </section>
+          </div>
+          <section class="panel breakdown-panel">
+            <div class="panel-heading">
+              <div>
+                <h3>Distribusi program studi</h3>
+                <p id="breakdown-caption" class="muted">Untuk sesi terbaru.</p>
+              </div>
+            </div>
+            <div id="program-breakdown" class="empty-state compact">
+              <p>Belum ada data.</p>
+            </div>
+          </section>
         </section>
-        <div class="section-heading list-heading"><div><h3>Riwayat rapat</h3><p class="muted">Rapat terbaru ditampilkan lebih dahulu.</p></div><span id="meeting-count" class="count-label">0 rapat</span></div>
-        <div id="meetings-list" class="meeting-list"><div class="empty-state"><p>Memuat daftar rapat…</p></div></div>
-      </section>
 
-      <section id="view-attendance" class="view-section" aria-labelledby="attendance-title" hidden>
-        <div class="section-heading"><div><h2 id="attendance-title">Data presensi</h2><p class="muted">Cari peserta, filter per rapat, lalu ekspor laporan CSV.</p></div><button id="export-csv" class="button button-primary" type="button">Ekspor CSV ↓</button></div>
-        <section class="panel filter-panel"><div class="filters"><div class="field filter-search"><label for="attendance-search">Cari peserta</label><input id="attendance-search" type="search" placeholder="Ketik nama peserta…"></div><div class="field"><label for="attendance-meeting-filter">Rapat</label><select id="attendance-meeting-filter"><option value="all">Semua rapat</option></select></div><div class="field"><label for="attendance-program-filter">Program studi</label><select id="attendance-program-filter"><option value="all">Semua program studi</option></select></div></div><p id="attendance-summary" class="muted filter-summary">Memuat data…</p></section>
-        <div class="table-wrap panel"><table class="data-table"><thead><tr><th>Peserta</th><th>Program studi</th><th>Rapat</th><th>Waktu check-in (WITA)</th></tr></thead><tbody id="attendance-table-body"><tr><td colspan="4" class="table-empty">Memuat data…</td></tr></tbody></table></div>
-      </section>
+        <section
+          id="view-meetings"
+          class="view-section"
+          aria-labelledby="meetings-title"
+          hidden
+        >
+          <div class="section-heading">
+            <div>
+              <h2 id="meetings-title">Kelola rapat</h2>
+              <p class="muted">
+                Buat rapat, buka sesi presensi, lalu tampilkan QR untuk peserta.
+              </p>
+            </div>
+          </div>
+          <section class="panel form-panel">
+            <div class="panel-heading">
+              <div>
+                <h3 id="meeting-form-title">Buat rapat baru</h3>
+                <p class="muted">
+                  Sesi tidak dibuat otomatis. Jadwal dapat diatur secara manual.
+                </p>
+              </div>
+            </div>
+            <form id="meeting-form" class="meeting-form">
+              <div class="field field-wide">
+                <label for="meeting-title"
+                  >Nama rapat <span class="required">*</span></label
+                ><input
+                  id="meeting-title"
+                  name="title"
+                  maxlength="120"
+                  placeholder="Contoh: Rapat Mingguan Angkatan"
+                  required
+                />
+              </div>
+              <div class="field">
+                <label for="meeting-date"
+                  >Tanggal <span class="required">*</span></label
+                ><input
+                  id="meeting-date"
+                  name="meeting_date"
+                  type="date"
+                  required
+                />
+              </div>
+              <div class="field">
+                <label for="meeting-time">Jam mulai (opsional)</label
+                ><input id="meeting-time" name="start_time" type="time" />
+              </div>
+              <div class="field field-wide">
+                <label for="meeting-notes">Catatan (opsional)</label
+                ><textarea
+                  id="meeting-notes"
+                  name="notes"
+                  rows="2"
+                  maxlength="1000"
+                  placeholder="Agenda atau informasi tambahan"
+                ></textarea>
+              </div>
+              <div class="field field-wide check-field">
+                <label class="check-label" for="meeting-rotating">
+                  <input
+                    id="meeting-rotating"
+                    name="rotating_qr"
+                    type="checkbox"
+                    checked
+                  />
+                  <span
+                    ><strong>QR berganti otomatis setiap 15 detik</strong>
+                    (disarankan). Foto atau tautan QR yang diteruskan ke grup
+                    chat berhenti berlaku dalam ±90 detik. Matikan hanya untuk
+                    rapat online yang memerlukan tautan tetap.</span
+                  >
+                </label>
+              </div>
+              <div class="form-actions field-wide">
+                <button
+                  id="meeting-save"
+                  class="button button-primary"
+                  type="submit"
+                >
+                  Simpan rapat</button
+                ><button
+                  id="meeting-cancel-edit"
+                  class="button button-secondary"
+                  type="button"
+                  hidden
+                >
+                  Batal edit</button
+                ><span
+                  id="meeting-form-feedback"
+                  class="feedback"
+                  role="status"
+                ></span>
+              </div>
+            </form>
+          </section>
+          <div class="section-heading list-heading">
+            <div>
+              <h3>Riwayat rapat</h3>
+              <p class="muted">Rapat terbaru ditampilkan lebih dahulu.</p>
+            </div>
+            <span id="meeting-count" class="count-label">0 rapat</span>
+          </div>
+          <div id="meetings-list" class="meeting-list">
+            <div class="empty-state"><p>Memuat daftar rapat…</p></div>
+          </div>
+        </section>
 
-      <section id="view-programs" class="view-section" aria-labelledby="programs-title" hidden>
-        <div class="section-heading"><div><h2 id="programs-title">Program studi</h2><p class="muted">Kelola pilihan program studi pada formulir presensi peserta.</p></div></div>
-        <section class="panel form-panel"><form id="program-form" class="inline-form"><div class="field"><label for="program-name">Nama program studi</label><input id="program-name" name="name" maxlength="100" placeholder="Masukkan nama program studi" required></div><button class="button button-primary" type="submit">Tambah program studi</button></form><p id="program-form-feedback" class="feedback" role="status"></p></section>
-        <section class="panel"><div class="panel-heading"><div><h3>Daftar program studi</h3><p class="muted">Program nonaktif tidak muncul pada formulir check-in baru. Data historis tetap tersimpan.</p></div></div><div id="programs-list" class="program-list"><div class="empty-state"><p>Memuat program studi…</p></div></div></section>
-      </section>
-    </main>
-    <footer class="app-footer"><span>The Gladius 26 Attendance</span><span>Waktu presensi ditampilkan dalam WITA (Asia/Makassar).</span></footer>
-  </div>
+        <section
+          id="view-attendance"
+          class="view-section"
+          aria-labelledby="attendance-title"
+          hidden
+        >
+          <div class="section-heading">
+            <div>
+              <h2 id="attendance-title">Data presensi</h2>
+              <p class="muted">
+                Cari peserta, filter per rapat, lalu ekspor laporan CSV.
+              </p>
+            </div>
+            <button id="export-csv" class="button button-primary" type="button">
+              Ekspor CSV ↓
+            </button>
+          </div>
+          <section class="panel filter-panel">
+            <div class="filters">
+              <div class="field filter-search">
+                <label for="attendance-search">Cari peserta</label
+                ><input
+                  id="attendance-search"
+                  type="search"
+                  placeholder="Ketik nama peserta…"
+                />
+              </div>
+              <div class="field">
+                <label for="attendance-meeting-filter">Rapat</label
+                ><select id="attendance-meeting-filter">
+                  <option value="all">Semua rapat</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="attendance-program-filter">Program studi</label
+                ><select id="attendance-program-filter">
+                  <option value="all">Semua program studi</option>
+                </select>
+              </div>
+            </div>
+            <div class="filter-footer">
+              <p id="attendance-summary" class="muted filter-summary">
+                Memuat data…
+              </p>
+              <label class="check-label check-inline" for="attendance-dup-filter"
+                ><input id="attendance-dup-filter" type="checkbox" /> Hanya
+                kemungkinan duplikat</label
+              >
+            </div>
+          </section>
+          <details id="manual-panel" class="panel manual-panel">
+            <summary>
+              <span><strong>+ Tambah presensi manual</strong></span>
+              <span class="muted"
+                >Untuk peserta yang hadir tetapi tidak bisa scan QR.</span
+              >
+            </summary>
+            <form id="manual-form" class="manual-form">
+              <div class="field">
+                <label for="manual-meeting">Rapat</label
+                ><select id="manual-meeting" name="meeting_id" required></select>
+              </div>
+              <div class="field">
+                <label for="manual-name">Nama lengkap</label
+                ><input
+                  id="manual-name"
+                  name="full_name"
+                  maxlength="100"
+                  autocomplete="off"
+                  placeholder="Nama peserta"
+                  required
+                />
+              </div>
+              <div class="field">
+                <label for="manual-program">Program studi</label
+                ><select
+                  id="manual-program"
+                  name="study_program_id"
+                  required
+                ></select>
+              </div>
+              <div class="manual-actions">
+                <button
+                  id="manual-submit"
+                  class="button button-primary"
+                  type="submit"
+                >
+                  Tambahkan
+                </button>
+              </div>
+              <p
+                id="manual-feedback"
+                class="feedback field-wide"
+                role="status"
+              ></p>
+            </form>
+          </details>
+          <div class="table-wrap panel">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Peserta</th>
+                  <th>Program studi</th>
+                  <th>Rapat</th>
+                  <th>Waktu check-in (WITA)</th>
+                  <th><span class="visually-hidden">Aksi</span></th>
+                </tr>
+              </thead>
+              <tbody id="attendance-table-body">
+                <tr>
+                  <td colspan="5" class="table-empty">Memuat data…</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="load-more-row">
+            <button
+              id="attendance-more"
+              class="button button-secondary"
+              type="button"
+              hidden
+            >
+              Tampilkan lebih banyak
+            </button>
+          </div>
+        </section>
 
-  <dialog id="qr-dialog" class="modal qr-modal" aria-labelledby="qr-title"><div class="modal-top"><div><p class="eyebrow">SESI PRESENSI</p><h2 id="qr-title">QR Code rapat</h2></div><button class="icon-button" type="button" data-close-dialog="qr-dialog" aria-label="Tutup dialog">×</button></div><p id="qr-meeting-name" class="muted"></p><div id="qr-code" class="qr-code-wrap" aria-label="QR Code presensi"></div><p class="qr-instruction">Peserta dapat memindai kode ini dengan kamera ponsel.</p><label class="field-label" for="qr-link">Tautan check-in</label><div class="copy-row"><input id="qr-link" type="text" readonly><button id="copy-qr-link" class="button button-secondary" type="button">Salin</button></div><p id="qr-feedback" class="feedback" role="status"></p></dialog>
-  <dialog id="confirm-dialog" class="modal confirm-modal" aria-labelledby="confirm-title"><div class="modal-top"><div><p class="eyebrow">KONFIRMASI</p><h2 id="confirm-title">Konfirmasi tindakan</h2></div><button class="icon-button" type="button" data-close-dialog="confirm-dialog" aria-label="Tutup dialog">×</button></div><p id="confirm-message" class="muted"></p><div class="modal-actions"><button class="button button-secondary" type="button" data-close-dialog="confirm-dialog">Batal</button><button id="confirm-action" class="button button-primary" type="button">Lanjutkan</button></div></dialog>
-  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-  <script src="js/config.js"></script>
-  <script type="module" src="js/admin.js"></script>
-  <script src="js/pwa.js" defer></script>
-</body>
+        <section
+          id="view-programs"
+          class="view-section"
+          aria-labelledby="programs-title"
+          hidden
+        >
+          <div class="section-heading">
+            <div>
+              <h2 id="programs-title">Program studi</h2>
+              <p class="muted">
+                Kelola pilihan program studi pada formulir presensi peserta.
+              </p>
+            </div>
+          </div>
+          <section class="panel form-panel">
+            <form id="program-form" class="inline-form">
+              <div class="field">
+                <label for="program-name">Nama program studi</label
+                ><input
+                  id="program-name"
+                  name="name"
+                  maxlength="100"
+                  placeholder="Masukkan nama program studi"
+                  required
+                />
+              </div>
+              <button class="button button-primary" type="submit">
+                Tambah program studi
+              </button>
+            </form>
+            <p id="program-form-feedback" class="feedback" role="status"></p>
+          </section>
+          <section class="panel">
+            <div class="panel-heading">
+              <div>
+                <h3>Daftar program studi</h3>
+                <p class="muted">
+                  Program nonaktif tidak muncul pada formulir check-in baru.
+                  Data historis tetap tersimpan.
+                </p>
+              </div>
+            </div>
+            <div id="programs-list" class="program-list">
+              <div class="empty-state"><p>Memuat program studi…</p></div>
+            </div>
+          </section>
+        </section>
+      </main>
+      <footer class="app-footer">
+        <span>The Gladius 26 Attendance</span
+        ><span>Waktu presensi ditampilkan dalam WITA (Asia/Makassar).</span>
+      </footer>
+    </div>
+
+    <dialog id="qr-dialog" class="modal qr-modal" aria-labelledby="qr-title">
+      <div class="modal-top">
+        <div>
+          <p class="eyebrow">SESI PRESENSI</p>
+          <h2 id="qr-title">QR Code rapat</h2>
+        </div>
+        <button
+          class="icon-button"
+          type="button"
+          data-close-dialog="qr-dialog"
+          aria-label="Tutup dialog"
+        >
+          ×
+        </button>
+      </div>
+      <p id="qr-meeting-name" class="muted"></p>
+      <div
+        id="qr-code"
+        class="qr-code-wrap"
+        role="img"
+        aria-label="QR Code presensi"
+      ></div>
+      <div id="qr-timer" class="qr-timer" hidden>
+        <span id="qr-timer-bar" class="qr-timer-bar"></span>
+      </div>
+      <p id="qr-instruction" class="qr-instruction">
+        Peserta dapat memindai kode ini dengan kamera ponsel.
+      </p>
+      <p id="qr-session-info" class="qr-session-info"></p>
+      <div class="qr-actions">
+        <button
+          id="qr-fullscreen"
+          class="button button-primary"
+          type="button"
+        >
+          Tampilkan layar penuh
+        </button>
+      </div>
+      <div id="qr-link-block" class="qr-link-block">
+        <label class="field-label" for="qr-link">Tautan check-in</label>
+        <div class="copy-row">
+          <input id="qr-link" type="text" readonly /><button
+            id="copy-qr-link"
+            class="button button-secondary"
+            type="button"
+          >
+            Salin
+          </button>
+        </div>
+      </div>
+      <p id="qr-feedback" class="feedback" role="status"></p>
+    </dialog>
+    <dialog
+      id="confirm-dialog"
+      class="modal confirm-modal"
+      aria-labelledby="confirm-title"
+    >
+      <div class="modal-top">
+        <div>
+          <p class="eyebrow">KONFIRMASI</p>
+          <h2 id="confirm-title">Konfirmasi tindakan</h2>
+        </div>
+        <button
+          class="icon-button"
+          type="button"
+          data-close-dialog="confirm-dialog"
+          aria-label="Tutup dialog"
+        >
+          ×
+        </button>
+      </div>
+      <p id="confirm-message" class="muted"></p>
+      <div id="confirm-extra" class="confirm-extra" hidden>
+        <div class="field">
+          <label for="confirm-duration">Sesi dibuka selama</label
+          ><select id="confirm-duration">
+            <option value="60">1 jam</option>
+            <option value="120">2 jam</option>
+            <option value="180" selected>3 jam</option>
+            <option value="360">6 jam</option>
+            <option value="720">12 jam</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button
+          class="button button-secondary"
+          type="button"
+          data-close-dialog="confirm-dialog"
+        >
+          Batal</button
+        ><button
+          id="confirm-action"
+          class="button button-primary"
+          type="button"
+        >
+          Lanjutkan
+        </button>
+      </div>
+    </dialog>
+    <script src="js/vendor/qrcode-1.0.0.min.js"></script>
+    <script src="js/vendor/supabase-js-2.118.0.umd.js"></script>
+    <script src="js/config.js"></script>
+    <script type="module" src="js/admin.js"></script>
+    <script src="js/pwa.js" defer></script>
+  </body>
 </html>

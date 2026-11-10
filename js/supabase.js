@@ -1,9 +1,15 @@
-import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+import { isMissingDatabaseFunction } from "./supabase-errors.js";
 
+export { isMissingDatabaseFunction };
+
+// supabase-js is vendored (js/vendor/) and loaded as a classic script before this
+// module, which exposes it as window.supabase.
+const createClient = window.supabase?.createClient;
 const config = window.GLADIUS_CONFIG;
 const publishableKey =
   config?.supabasePublishableKey || config?.supabaseAnonKey;
 export const isSupabaseConfigured = Boolean(
+  typeof createClient === "function" &&
   config?.supabaseUrl &&
   publishableKey &&
   !config.supabaseUrl.includes("YOUR_PROJECT_REF") &&
@@ -75,5 +81,7 @@ export const safeError = (error) => {
     return "Tidak dapat terhubung ke server. Periksa internet dan konfigurasi.";
   if (/JWT|session|auth/i.test(message) && /expired|invalid/i.test(message))
     return "Sesi login berakhir. Silakan masuk kembali.";
+  if (isMissingDatabaseFunction(error))
+    return "Database belum diperbarui ke versi aplikasi ini. Administrator perlu menjalankan migrasi terbaru (lihat docs/DEPLOY.md).";
   return "Permintaan belum berhasil. Periksa koneksi dan konfigurasi, lalu coba lagi.";
 };

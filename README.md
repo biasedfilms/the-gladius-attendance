@@ -9,10 +9,13 @@ Aplikasi dirancang dengan antarmuka yang minimalis, responsif, dan mudah digunak
 ## Fitur Utama
 
 - **Pengelolaan rapat** — membuat, mengedit, dan melihat riwayat rapat.
-- **Sesi presensi terkontrol** — admin dapat membuka dan menutup presensi sesuai kebutuhan rapat.
-- **QR code khusus setiap sesi** — setiap sesi memiliki tautan presensi tersendiri.
+- **Sesi presensi terkontrol** — admin membuka sesi dengan durasi pilihan (1–12 jam), lalu dapat memperpanjang, menutup, atau membuka ulang sesi.
+- **QR berganti otomatis** — QR di layar berganti setiap 15 detik, sehingga foto atau tautan yang diteruskan ke grup chat berhenti berlaku dalam ±90 detik. Untuk rapat online tersedia mode tautan tetap.
+- **Ganti QR darurat** — jika QR tersebar ke luar ruangan, admin dapat membatalkan semua QR dan tautan lama sekaligus.
+- **Mode layar penuh** — QR dapat ditampilkan besar di proyektor.
 - **Check-in melalui ponsel** — peserta mengisi nama dan program studi dari browser tanpa wajib memasang aplikasi.
-- **Dashboard kehadiran** — melihat catatan presensi yang berhasil disimpan.
+- **Dashboard kehadiran** — catatan presensi muncul langsung saat peserta check-in.
+- **Koreksi data** — hapus entri yang salah (dengan tombol *Urungkan*), tambah presensi manual untuk peserta yang tidak bisa scan, dan tanda *Cek duplikat* untuk nama yang mirip ("Budi S." dan "Budi Santoso").
 - **Pengelolaan program studi** — daftar pilihan program studi tersedia secara terpusat.
 - **Pencarian dan filter** — membantu admin menemukan catatan presensi.
 - **Ekspor laporan CSV** — mengunduh data presensi untuk dokumentasi dan pengolahan lebih lanjut.
@@ -27,7 +30,7 @@ Aplikasi dirancang dengan antarmuka yang minimalis, responsif, dan mudah digunak
 1. Masuk ke ruang administrator.
 2. Buat rapat dan lengkapi informasi yang diperlukan.
 3. Buka sesi presensi ketika presensi akan dimulai.
-4. Tampilkan QR code agar peserta dapat memindainya.
+4. Tampilkan QR code (sebaiknya layar penuh di proyektor) agar peserta dapat memindainya. Biarkan dialog QR terbuka selama presensi—QR diperbarui otomatis.
 5. Pantau catatan kehadiran dari dashboard.
 6. Tutup sesi presensi setelah selesai dan ekspor laporan bila diperlukan.
 
@@ -46,16 +49,22 @@ Peserta tidak perlu membuat akun atau memasang PWA untuk melakukan check-in.
 - Catatan kehadiran hanya dianggap berhasil setelah dikonfirmasi oleh server.
 - Waktu check-in bersumber dari waktu server/database dan ditampilkan dalam zona waktu WITA (Asia/Makassar).
 - Check-in hanya dapat dilakukan melalui sesi yang valid dan sedang terbuka.
-- Sistem mencegah pengiriman presensi ganda berdasarkan nama dan program studi dalam rapat yang sama.
+- Sistem mencegah pengiriman presensi ganda berdasarkan nama dan program studi dalam rapat yang sama (huruf besar/kecil dan tanda baca diabaikan).
+- QR berganti setiap 15 detik dan setiap scan hanya berlaku 15 menit untuk mengisi formulir.
+- Entri yang dihapus admin disimpan di arsip database dan dapat dipulihkan.
 - Akses pengelolaan data dibatasi untuk administrator yang berwenang.
 
-**Catatan:** QR code memastikan peserta memiliki tautan sesi, tetapi tidak dapat membuktikan secara mandiri bahwa peserta hadir secara fisik. Tautan QR juga dapat dibagikan kepada orang lain. Admin sebaiknya menampilkan QR hanya saat rapat berlangsung dan menutup presensi setelah selesai.
+**Catatan:** QR yang berganti otomatis membuat tautan yang diteruskan cepat kedaluwarsa, tetapi tidak dapat membuktikan secara mandiri bahwa peserta hadir secara fisik—seseorang di ruangan tetap bisa mengirim foto QR terbaru secara langsung. Admin sebaiknya menampilkan QR hanya saat rapat berlangsung, menutup presensi setelah selesai, dan memakai **Ganti QR** bila QR tersebar.
 
 ## Kebutuhan Penggunaan
 
 - Koneksi internet diperlukan untuk memuat data rapat dan menyimpan presensi.
 - Peserta perlu membuka QR dari sesi yang benar dan masih aktif.
 - Fitur instalasi ke Home Screen bergantung pada dukungan browser dan perangkat.
+
+## Untuk Pengelola Teknis
+
+Panduan deploy, upgrade database, pembuatan akun admin, pemulihan data, dan pemecahan masalah ada di [docs/DEPLOY.md](docs/DEPLOY.md).
 
 ## Tentang Proyek
 

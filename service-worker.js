@@ -1,7 +1,10 @@
-const CACHE_NAME = "gladius-static-v5-brand-refresh";
+// Bump CACHE_NAME on every deploy that changes precached files.
+const CACHE_NAME = "gladius-static-v6-rotating-qr";
 const STATIC_ASSETS = [
   "./", "./index.html", "./login.html", "./admin.html", "./check-in.html", "./offline.html",
-  "./manifest.json", "./css/styles.css", "./assets/the-gladius-logo.png", "./assets/favicon-64.png", "./assets/icon-192.png", "./assets/icon-512.png", "./assets/icon-maskable-192.png", "./assets/icon-maskable-512.png"
+  "./manifest.json", "./css/styles.css",
+  "./js/vendor/supabase-js-2.118.0.umd.js", "./js/vendor/qrcode-1.0.0.min.js",
+  "./assets/the-gladius-logo.png", "./assets/favicon-64.png", "./assets/icon-192.png", "./assets/icon-512.png", "./assets/icon-maskable-192.png", "./assets/icon-maskable-512.png"
 ];
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS)).then(() => self.skipWaiting()));
@@ -19,6 +22,14 @@ self.addEventListener("fetch", (event) => {
   if (/\/(rest\/v1|auth\/v1|functions\/v1)\//.test(url.pathname)) return;
   if (request.mode === "navigate") {
     event.respondWith(fetch(request).catch(async () => (await caches.match("./offline.html"))));
+    return;
+  }
+  if (url.pathname.includes("/js/vendor/")) {
+    // Versioned file names: safe to serve from cache first.
+    event.respondWith(caches.match(request).then((cached) => cached || fetch(request).then((response) => {
+      if (response.ok) { const copy = response.clone(); caches.open(CACHE_NAME).then((cache) => cache.put(request, copy)); }
+      return response;
+    })));
     return;
   }
   if (/\.(css|js)$/.test(url.pathname)) {

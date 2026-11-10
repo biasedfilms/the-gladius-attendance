@@ -1,0 +1,12 @@
+{
+  "name": "the-gladius-attendance",
+  "private": true,
+  "type": "module",
+  "description": "Static site; there is no build step. These scripts only run tests.",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "test:sql": "node tests/sql/run.mjs",
+    "test:edge": "deno check --config supabase/functions/check-in/deno.json supabase/functions/check-in/index.ts && deno test --config supabase/functions/check-in/deno.json --allow-net=jsr.io supabase/functions/check-in/lib.test.ts",
+    "test:all": "npm test && npm run test:sql && npm run test:edge"
+  }
+}
